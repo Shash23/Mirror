@@ -4,15 +4,11 @@ const PatientSchema = new mongoose.Schema({
 
     firstName: {
         type: String,
-        required: true,
-        min: 5,
-        max: 15
+        required: true
     },
     lastName: {
         type: String,
-        required: true,
-        min: 5,
-        max: 15
+        required: true
     },
     email: {
         type: String,
@@ -22,15 +18,22 @@ const PatientSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        min: 5,
-    },
-    profilePic: {
-        type: String,
-        default: "",
     },
     doctors: {
         type: Array,
         default: [],
+    },
+    patientID: {
+        type: Number,
+        default: 0,
+    },
+    posts: {
+        type: Array,
+        default: [],
+    },
+    doctorsNotes: {
+        type: Array,
+        default: []
     }
 
 }, {timestamps: true})

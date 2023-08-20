@@ -5,14 +5,10 @@ const DoctorSchema = new mongoose.Schema({
     firstName: {
         type: String,
         required: true,
-        min: 5,
-        max: 15
     },
     lastName: {
         type: String,
         required: true,
-        min: 5,
-        max: 15
     },
     email: {
         type: String,
@@ -24,10 +20,11 @@ const DoctorSchema = new mongoose.Schema({
         required: true,
         min: 5,
     },
-    profilePic: {
-        type: String,
-        default: "",
+    doctorID: {
+        type: Number, 
+        default: 0,
     }
+
 
 }, {timestamps: true})
 

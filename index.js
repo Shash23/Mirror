@@ -12,8 +12,12 @@ app.use(bodyParser.json()); // incoming info is always json
 const uri = "mongodb+srv://shashgk23:1rr15FYFFhEQkc7t@cluster0.jusxwrs.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri);
 
-const patientsRoutes = require("./testRoutes/api/patients");
+const patientsRoutes = require("./routes/api/patientRoutes");
+const doctorRoutes = require("./routes/api/doctorRoutes")
+
 app.use('/api/patients', patientsRoutes);
+app.use('/api/doctors', doctorRoutes);
+
 
 app.listen(PORT, async () => {
     try {
