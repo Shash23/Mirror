@@ -91,6 +91,8 @@ async function addPost(req, res) {
         const patientID = parseInt(req.params.patientID);
         const newPost = req.body;
 
+        newPost.timestamp = new Date();
+
         const result = await client.db("Users").collection("Patients").updateOne(
             { patientID },
             { $push: { posts: newPost } }
