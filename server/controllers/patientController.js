@@ -6,17 +6,11 @@ async function createPatient(req, res) {
     
     await client.connect()
     console.log(req.body)
-    
-    /*req = {
-        "firstName": "s",
-        "lastName": "g"
-    }*/
 
     const result = await client.db("Users").collection("Patients").insertOne(req.body)
     console.log(`New Patient Added with following id: ${result.insertedId}`)
     res.json(result)
     
-
     await client.close()
 }
 
@@ -45,6 +39,35 @@ async function getPatientByID(req, res) {
 
     await client.close()
 }
+
+/*
+async function getPatientByID(req, res) {
+    try {
+        await client.connect();
+
+        const patientID = parseInt(req.params.patientID);
+        const patient = await client.db("Users").collection("Patients").findOne({ patientID });
+
+        if (patient) {
+            
+            const doctors = await Promise.all(patient.doctors.map(async doctorID => {
+                const doctor = await client.db("Users").collection("Doctors").findOne({ doctorID });
+                return `${doctor.firstName} ${doctor.lastName}`; 
+            }));
+            patient.doctors = doctors;
+
+            res.json(patient);
+        } else {
+            res.status(404).json({ msg: `Patient with ID ${patientID} not found` });
+        }
+    } catch (error) {
+        res.status(500).json({ msg: `Error: ${error.message}` });
+    } finally {
+        await client.close();
+    }
+}
+*/
+
 
 async function updatePatient(req, res) {
 
@@ -92,6 +115,7 @@ async function addPost(req, res) {
         const newPost = req.body;
 
         newPost.timestamp = new Date();
+        newPost.postID = generateUniqueID(); // Generate a unique post ID
 
         const result = await client.db("Users").collection("Patients").updateOne(
             { patientID },
@@ -99,16 +123,51 @@ async function addPost(req, res) {
         );
 
         if (result.matchedCount > 0) {
-            res.json({ msg: `new post to patient ${patientID}` });
+            res.json({ msg: `New post added to patient ${patientID}`, newPost });
         } else {
-            res.status(404).json({ msg: `patient ${patientID} not found` });
+            res.status(404).json({ msg: `Patient ${patientID} not found` });
         }
     } catch (error) {
-        res.status(500).json({ msg: `error: ${error.message}` });
+        res.status(500).json({ msg: `Error: ${error.message}` });
     } finally {
         await client.close();
     }
 }
+
+
+
+function generateUniqueID() {
+    // Generate a unique ID here, you can use libraries like 'uuid' or 'shortid'
+    // Example using 'uuid':
+    const { v4: uuidv4 } = require('uuid');
+    return uuidv4();
+}
+
+
+async function deletePost(req, res) {
+    try {
+        await client.connect();
+
+        const patientID = parseInt(req.params.patientID);
+        const postIndex = parseInt(req.params.postIndex);
+
+        const result = await client.db("Users").collection("Patients").updateOne(
+            { patientID },
+            { $pull: { posts: { timestamp: patient.posts[postIndex].timestamp } } }
+        );
+
+        if (result.matchedCount > 0) {
+            res.json({ msg: `Post deleted from patient ${patientID}` });
+        } else {
+            res.status(404).json({ msg: `Patient ${patientID} not found` });
+        }
+    } catch (error) {
+        res.status(500).json({ msg: `Error: ${error.message}` });
+    } finally {
+        await client.close();
+    }
+}
+
 
 module.exports = { createPatient, getAllPatients, getPatientByID, updatePatient, deletePatient, addPost };
 

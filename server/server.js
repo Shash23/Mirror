@@ -1,11 +1,14 @@
 const express = require("express")
 const morgan = require('morgan')
+const cors = require('cors')
 const bodyParser = require('body-parser')
 const { MongoClient } = require('mongodb')
 
 const app = express()
+
 const PORT = 8000
 
+app.use(cors());
 app.use(morgan('dev')) // debug messages, need to learn how to use
 app.use(bodyParser.json()) // incoming info is always json
 
